@@ -3,19 +3,31 @@ import java.util.Date;
 import java.util.List;
 
 public class Vehicle_info {
-	
-	
+
 	private List<Vehicle> parkedVehicleList = new ArrayList<Vehicle>();
-	
+
 	public void addVehicle(String vehicleNumber) {
 		Vehicle v = new Vehicle(vehicleNumber, new Date());
 		parkedVehicleList.add(v);
 	}
-	
+
+	public boolean checkAlreadyExist(String vehicleNumber) {
+		boolean check = false;
+		for (int i = 0; i < parkedVehicleList.size(); i++) {
+			Vehicle v = parkedVehicleList.get(i);
+			if (v.vehicleNumber.equals(vehicleNumber)) {
+				check = true;
+				System.out.println("Entered vehicle is already exist in garage");
+				break;
+			}
+		}
+		return check;
+	}
+
 	public void removeVehicle(String vehicleNumber) {
 		int index = -1;
-		//int index = parkedVehicleList.indexOf(vehicleNumber);
-		
+		// int index = parkedVehicleList.indexOf(vehicleNumber);
+
 		for (int i = 0; i < parkedVehicleList.size(); i++) {
 			Vehicle v = parkedVehicleList.get(i);
 			if (v.vehicleNumber.equals(vehicleNumber)) {
@@ -27,10 +39,10 @@ public class Vehicle_info {
 			parkedVehicleList.remove(index);
 		}
 	}
-	
+
 	public Vehicle getVehicle(String vehicleNumber) {
 		int index = -1;
-		// Check vehiclenumber at what position in array 
+		// Check vehiclenumber at what position in array
 		for (int i = 0; i < parkedVehicleList.size(); i++) {
 			Vehicle v = parkedVehicleList.get(i);
 			if (v.vehicleNumber.equals(vehicleNumber)) {
@@ -44,8 +56,9 @@ public class Vehicle_info {
 			return null;
 		}
 	}
-	
+
 	public int getParkingCount() {
 		return parkedVehicleList.size();
-	}	
+	}
 }
+
