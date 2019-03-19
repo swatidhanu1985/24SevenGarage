@@ -1,33 +1,29 @@
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
-import java.util.Scanner;
 
 public class TSG_Transaction {
 
-	public boolean doPaymnet(Date inTime) {
-		Scanner scan = new Scanner(System.in);
+	public double getParkingPrice(double parkingHrs) {
 		int price = 10;
-		double park_time = 0;
-		double amount;
-		String card_number = null;
+
+		double amount = price * parkingHrs / 3600;
+		amount = Math.round(amount * 100.0) / 100.0;
+		System.out.println("Your parking price is: " + amount);
+
+		return amount;
+	}
+
+	public boolean doPaymnet(String vehicleNumber, double amount, String cardNumber, double parkingHrs) {
+		// int price = 10;
 
 		try {
-			Date outTime = new Date();
-			double parkingHrs = calculateParkingHours(inTime, outTime);
-			amount = price * parkingHrs;
-			System.out.println("Your parking price is: " + amount);
-     
-			System.out.println("\n\nEnter Debit/Credit card number(16 digit):");
-			card_number = scan.next();
-			if (isNumeric(card_number)) {
+			if (isNumeric(cardNumber)) {
 				System.out.println("\nPayment Successful!!\n");
-				System.out.println("Have a nice day!!\n Welcome Again!!\n");
-			return true;
-			}
-			else {
-			System.out.println("\nInvalid Card Number!! \n\n");
-			return false;
+				showReceipt(vehicleNumber, parkingHrs, amount);
+				return true;
+			} else {
+				System.out.println("\nInvalid Card Number!! \n");
+				return false;
 			}
 		}
 
@@ -39,15 +35,22 @@ public class TSG_Transaction {
 
 	}
 
+	public static void showReceipt(String vehicleNumber, double parkingHrs, double amount) {
+		System.out.println("*************** Receipt ******************");
+		System.out.println("Registration Number is: " + vehicleNumber);
+		System.out.println("Parking Time is: " + parkingHrs + " seconds");
+		System.out.println("Parking Amount: " + amount + " SEK");
+		System.out.println("******************************************\n");
+		System.out.println("Have a nice day!!\nWelcome again\n\n");
+	}
+
 	public boolean isNumeric(String cardNu) {
-		return cardNu != null && cardNu.matches("[0-9]+") &&  cardNu.length() == 16;
+		return cardNu != null && cardNu.matches("[0-9]+") && cardNu.length() == 16;
 	}
 
-	private double calculateParkingHours(Date inTime, Date outTime) {
-		// Date outTime;
-		double parkingHrs = outTime.getSeconds() - inTime.getSeconds();
-		return parkingHrs;
+	long calculateParkingHours(Date inTime, Date outTime) {
+		long parkingSeconds = (outTime.getTime() - inTime.getTime()) / 1000;
+		return parkingSeconds;
 
 	}
-
 }
