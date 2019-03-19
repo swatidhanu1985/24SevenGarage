@@ -1,7 +1,10 @@
+import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.scanner;
 
 public class TSG_main {
+
+	static Scanner scan = new Scanner(System.in);
 
 	public static void printWelcome() {
 		System.out.println("     Welcome to 24Seven Garage!");
@@ -27,21 +30,28 @@ public class TSG_main {
 	}
 
 	public static int readUsersChoice() {
-		Scanner scan = new Scanner(System.in);
-		return scan.nextInt();
+		try {
+			Scanner scann = new Scanner(System.in);
+			return scann.nextInt();
+		 	}
+		 	catch(InputMismatchException e) {
 
-	}
+		 		System.out.println("Enter valid Number!!\n");
+		 	}
+			return 0;
+			
+		}
 
 	public static String getRegistrationNumber() {
-		System.out.println("\nEnter Registration number ( Follow this format:xxx-12xx) :");
-		Scanner scan = new Scanner(System.in);
+		System.out.println("\nEnter Registration number (Follow this format:xxx12xx):");
+		// Scanner scan = new Scanner(System.in);
 		return scan.next();
 
 	}
 
 	public static boolean checkRegNumber(String v) {
 		if ((v.length() == 6) || (v.length() == 7) && ((v.matches("[a-zA-Z0-9_]+")))) {
-			System.out.println("You entered registration number: " + v +"\n");
+			System.out.println("You entered registration number: " + v + "\n");
 			return true;
 		} else {
 			System.out.println("\nWrong registration number.");
@@ -52,8 +62,9 @@ public class TSG_main {
 
 	public static String confirmRegistrationNumber() {
 		System.out.println("\nConfirm Registration number:");
-		Scanner scan = new Scanner(System.in);
+		// Scanner scan = new Scanner(System.in);
 		return scan.next();
+
 	}
 
 	public static void main(String[] args) {
@@ -77,9 +88,8 @@ public class TSG_main {
 				if (availableParkingCount > 0) {
 					vehicleNumber = getRegistrationNumber();
 					// add Vehicle in array
-					while (checkRegNumber(vehicleNumber)) {
+					if (checkRegNumber(vehicleNumber) && !vehicleInfo.checkAlreadyExist(vehicleNumber)) {
 						vehicleInfo.addVehicle(vehicleNumber);
-						break;
 					}
 				} else {
 					System.out.println("Parking is Full\n");
@@ -93,16 +103,23 @@ public class TSG_main {
 				// ask for payment
 				Vehicle vehicleToRemove = vehicleInfo.getVehicle(vehicleNumber);
 				if (vehicleToRemove != null) {
-					boolean isPaymentSuccessful = trans.doPaymnet(vehicleToRemove.inTime);
+					double parkingHrs = trans.calculateParkingHours(vehicleToRemove.inTime, new Date());
+					double amount = trans.getParkingPrice(parkingHrs);
+					String cardNumber = getCardNumber();
+
+					boolean isPaymentSuccessful = trans.doPaymnet(vehicleToRemove.vehicleNumber, amount, cardNumber,
+							parkingHrs);
+
 					// Remove Vehicle from array
 					if (isPaymentSuccessful) {
-					vehicleInfo.removeVehicle(vehicleNumber);
+						vehicleInfo.removeVehicle(vehicleNumber);
 					} else {
-						System.out.println("Try again to exit\n");
+						System.out.println("Try again to exit with Choice 2\n");
 					}
-						
+				} else {
+					System.out
+							.println("No vehicle found with this number, please enter valid car registration number..");
 				}
-
 				break;
 
 			case 3:
@@ -110,6 +127,12 @@ public class TSG_main {
 
 			}
 		}
+	}
+
+	private static String getCardNumber() {
+		System.out.println("\nEnter Debit/Credit card number(16 digit):");
+		return scan.next();
+
 	}
 
 }
